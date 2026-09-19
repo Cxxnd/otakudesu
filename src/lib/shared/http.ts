@@ -53,7 +53,8 @@ async function request(
     next?: { revalidate?: number | false; tags?: string[] };
   } = {
     headers: {
-      "User-Agent": getRandomUserAgent(),
+      "User-Agent":
+        userAgents.length > 0 ? getRandomUserAgent() : "Otakudesu API",
       "Accept-Language": "id-ID,id;q=0.9,en;q=0.8",
       ...headers,
     },
