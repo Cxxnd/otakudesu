@@ -1,3 +1,0 @@
-{
-  "/api/v1/comic/[slug]/chapter/[chapter]/route": "app/api/v1/comic/[slug]/chapter/[chapter]/route.js"
-}
