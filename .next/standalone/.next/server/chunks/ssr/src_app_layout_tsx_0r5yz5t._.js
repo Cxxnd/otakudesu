@@ -1,0 +1,3 @@
+module.exports=[27572,a=>{"use strict";var b=a.i(7997);a.s(["default",0,function({children:a}){return(0,b.jsx)("html",{lang:"en",children:(0,b.jsx)("body",{children:a})})},"metadata",0,{title:"Otakudesu API",description:"Open-source read-only API for anime, comics, movies and Indonesian live TV.",robots:{index:!0,follow:!1}},"viewport",0,{themeColor:"#0b0b0c",width:"device-width",initialScale:1}])},50645,function(a){a.n(a.i(27572))}];
+
+//# sourceMappingURL=src_app_layout_tsx_0r5yz5t._.js.map
