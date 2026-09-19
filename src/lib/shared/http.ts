@@ -1,8 +1,16 @@
 import { UpstreamError } from "@/lib/shared/errors";
 
 const DEFAULT_TIMEOUT_MS = 15_000;
-const DEFAULT_UA =
-  "Mozilla/5.0 (compatible; otakudesu-be/3.0; +https://github.com/rizkyhaksono/otakudesu-be)";
+const userAgents = [
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_3_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15",
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 17_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+];
+
+function getRandomUserAgent() {
+  return userAgents[Math.floor(Math.random() * userAgents.length)];
+}
 
 export type FetchOptions = {
   /** Seconds to keep the response in the Next.js Data Cache. `0` disables caching. */
@@ -26,7 +34,10 @@ export type FetchOptions = {
  * Cache and `revalidate` semantics to `fetch`, so this is what makes upstream
  * responses cacheable at all.
  */
-async function request(url: string, options: FetchOptions = {}): Promise<Response> {
+async function request(
+  url: string,
+  options: FetchOptions = {},
+): Promise<Response> {
   const {
     revalidate,
     tags,
@@ -38,9 +49,11 @@ async function request(url: string, options: FetchOptions = {}): Promise<Respons
     body,
   } = options;
 
-  const init: RequestInit & { next?: { revalidate?: number | false; tags?: string[] } } = {
+  const init: RequestInit & {
+    next?: { revalidate?: number | false; tags?: string[] };
+  } = {
     headers: {
-      "User-Agent": DEFAULT_UA,
+      "User-Agent": getRandomUserAgent(),
       "Accept-Language": "id-ID,id;q=0.9,en;q=0.8",
       ...headers,
     },
@@ -63,7 +76,9 @@ async function request(url: string, options: FetchOptions = {}): Promise<Respons
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     const timeoutSignal = AbortSignal.timeout(timeoutMs);
-    const composed = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;
+    const composed = signal
+      ? AbortSignal.any([signal, timeoutSignal])
+      : timeoutSignal;
 
     try {
       const response = await fetch(url, { ...init, signal: composed });
@@ -93,14 +108,20 @@ async function request(url: string, options: FetchOptions = {}): Promise<Respons
 function asUpstreamFailure(url: string, error: unknown): UpstreamError {
   if (error instanceof UpstreamError) return error;
   // AbortSignal.timeout rejects with TimeoutError; some runtimes surface AbortError.
-  if (error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError")) {
+  if (
+    error instanceof Error &&
+    (error.name === "TimeoutError" || error.name === "AbortError")
+  ) {
     return UpstreamError.timeout(url);
   }
   return new UpstreamError(`Upstream request failed: ${url}`);
 }
 
 /** Fetch upstream HTML. */
-export async function fetchHtml(url: string, options: FetchOptions = {}): Promise<string> {
+export async function fetchHtml(
+  url: string,
+  options: FetchOptions = {},
+): Promise<string> {
   const response = await request(url, {
     ...options,
     headers: {
@@ -116,7 +137,10 @@ export async function fetchHtml(url: string, options: FetchOptions = {}): Promis
 }
 
 /** Fetch and parse an upstream JSON document. */
-export async function fetchJson<T>(url: string, options: FetchOptions = {}): Promise<T> {
+export async function fetchJson<T>(
+  url: string,
+  options: FetchOptions = {},
+): Promise<T> {
   const response = await request(url, {
     ...options,
     headers: { Accept: "application/json", ...options.headers },
