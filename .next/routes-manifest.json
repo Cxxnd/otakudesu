@@ -1,0 +1,555 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/:path*",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Accept, Content-Type"
+        },
+        {
+          "key": "Access-Control-Max-Age",
+          "value": "86400"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), browsing-topics=()"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
+        }
+      ],
+      "regex": "^/api(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?(?:/)?$"
+    }
+  ],
+  "onMatchHeaders": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [
+      {
+        "source": "/api/home",
+        "destination": "/api/v1/anime/home",
+        "regex": "^/api/home(?:/)?$"
+      },
+      {
+        "source": "/api/anime-list",
+        "destination": "/api/v1/anime/list",
+        "regex": "^/api/anime-list(?:/)?$"
+      },
+      {
+        "source": "/api/genre",
+        "destination": "/api/v1/anime/genres",
+        "regex": "^/api/genre(?:/)?$"
+      },
+      {
+        "source": "/api/genre/:slug",
+        "destination": "/api/v1/anime/genres/:slug",
+        "regex": "^/api/genre(?:/([^/]+?))(?:/)?$"
+      },
+      {
+        "source": "/api/schedule",
+        "destination": "/api/v1/anime/schedule",
+        "regex": "^/api/schedule(?:/)?$"
+      },
+      {
+        "source": "/api/search/:keyword",
+        "destination": "/api/v1/anime/search/:keyword",
+        "regex": "^/api/search(?:/([^/]+?))(?:/)?$"
+      },
+      {
+        "source": "/api/ongoing-anime",
+        "destination": "/api/v1/anime/ongoing/1",
+        "regex": "^/api/ongoing-anime(?:/)?$"
+      },
+      {
+        "source": "/api/ongoing-anime/:page",
+        "destination": "/api/v1/anime/ongoing/:page",
+        "regex": "^/api/ongoing-anime(?:/([^/]+?))(?:/)?$"
+      },
+      {
+        "source": "/api/complete-anime",
+        "destination": "/api/v1/anime/complete/1",
+        "regex": "^/api/complete-anime(?:/)?$"
+      },
+      {
+        "source": "/api/complete-anime/:page",
+        "destination": "/api/v1/anime/complete/:page",
+        "regex": "^/api/complete-anime(?:/([^/]+?))(?:/)?$"
+      },
+      {
+        "source": "/api/episode/:slug",
+        "destination": "/api/v1/anime/episode/:slug",
+        "regex": "^/api/episode(?:/([^/]+?))(?:/)?$"
+      },
+      {
+        "source": "/api/batch/:slug",
+        "destination": "/api/v1/anime/batch/:slug",
+        "regex": "^/api/batch(?:/([^/]+?))(?:/)?$"
+      },
+      {
+        "source": "/api/movie/:slug",
+        "destination": "/api/v1/anime/movie/:slug",
+        "regex": "^/api/movie(?:/([^/]+?))(?:/)?$"
+      },
+      {
+        "source": "/api/anime/:slug/episodes/:episode",
+        "destination": "/api/v1/anime/detail/:slug/episodes/:episode",
+        "regex": "^/api/anime(?:/([^/]+?))/episodes(?:/([^/]+?))(?:/)?$"
+      },
+      {
+        "source": "/api/anime/:slug/episodes",
+        "destination": "/api/v1/anime/detail/:slug/episodes",
+        "regex": "^/api/anime(?:/([^/]+?))/episodes(?:/)?$"
+      },
+      {
+        "source": "/api/anime/:slug",
+        "destination": "/api/v1/anime/detail/:slug",
+        "regex": "^/api/anime(?:/([^/]+?))(?:/)?$"
+      }
+    ],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/api/v1/anime/batch/[slug]",
+      "regex": "^/api/v1/anime/batch/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/api/v1/anime/batch/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/complete/[page]",
+      "regex": "^/api/v1/anime/complete/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpage": "nxtPpage"
+      },
+      "namedRegex": "^/api/v1/anime/complete/(?<nxtPpage>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/detail/[slug]",
+      "regex": "^/api/v1/anime/detail/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/api/v1/anime/detail/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/detail/[slug]/episodes",
+      "regex": "^/api/v1/anime/detail/([^/]+?)/episodes(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/api/v1/anime/detail/(?<nxtPslug>[^/]+?)/episodes(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/detail/[slug]/episodes/[episode]",
+      "regex": "^/api/v1/anime/detail/([^/]+?)/episodes/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug",
+        "nxtPepisode": "nxtPepisode"
+      },
+      "namedRegex": "^/api/v1/anime/detail/(?<nxtPslug>[^/]+?)/episodes/(?<nxtPepisode>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/episode/[slug]",
+      "regex": "^/api/v1/anime/episode/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/api/v1/anime/episode/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/genres/[slug]",
+      "regex": "^/api/v1/anime/genres/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/api/v1/anime/genres/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/movie/[slug]",
+      "regex": "^/api/v1/anime/movie/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/api/v1/anime/movie/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/ongoing/[page]",
+      "regex": "^/api/v1/anime/ongoing/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpage": "nxtPpage"
+      },
+      "namedRegex": "^/api/v1/anime/ongoing/(?<nxtPpage>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/search/[keyword]",
+      "regex": "^/api/v1/anime/search/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPkeyword": "nxtPkeyword"
+      },
+      "namedRegex": "^/api/v1/anime/search/(?<nxtPkeyword>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/comic/[slug]",
+      "regex": "^/api/v1/comic/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/api/v1/comic/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/comic/[slug]/chapter/[chapter]",
+      "regex": "^/api/v1/comic/([^/]+?)/chapter/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug",
+        "nxtPchapter": "nxtPchapter"
+      },
+      "namedRegex": "^/api/v1/comic/(?<nxtPslug>[^/]+?)/chapter/(?<nxtPchapter>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/movie/genres/[id]",
+      "regex": "^/api/v1/movie/genres/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/v1/movie/genres/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/movie/tv/[id]",
+      "regex": "^/api/v1/movie/tv/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/v1/movie/tv/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/movie/tv/[id]/season/[season]",
+      "regex": "^/api/v1/movie/tv/([^/]+?)/season/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid",
+        "nxtPseason": "nxtPseason"
+      },
+      "namedRegex": "^/api/v1/movie/tv/(?<nxtPid>[^/]+?)/season/(?<nxtPseason>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/movie/tv/[id]/sources",
+      "regex": "^/api/v1/movie/tv/([^/]+?)/sources(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/v1/movie/tv/(?<nxtPid>[^/]+?)/sources(?:/)?$"
+    },
+    {
+      "page": "/api/v1/movie/[id]",
+      "regex": "^/api/v1/movie/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/v1/movie/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/movie/[id]/sources",
+      "regex": "^/api/v1/movie/([^/]+?)/sources(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/v1/movie/(?<nxtPid>[^/]+?)/sources(?:/)?$"
+    },
+    {
+      "page": "/api/v1/news/[id]",
+      "regex": "^/api/v1/news/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/v1/news/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/radio/stations/[id]",
+      "regex": "^/api/v1/radio/stations/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/v1/radio/stations/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/radio/stations/[id]/stream",
+      "regex": "^/api/v1/radio/stations/([^/]+?)/stream(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/v1/radio/stations/(?<nxtPid>[^/]+?)/stream(?:/)?$"
+    },
+    {
+      "page": "/api/v1/tv/channels/[id]",
+      "regex": "^/api/v1/tv/channels/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/v1/tv/channels/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/tv/channels/[id]/stream",
+      "regex": "^/api/v1/tv/channels/([^/]+?)/stream(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/v1/tv/channels/(?<nxtPid>[^/]+?)/stream(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/api",
+      "regex": "^/api(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api(?:/)?$"
+    },
+    {
+      "page": "/api/health",
+      "regex": "^/api/health(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/health(?:/)?$"
+    },
+    {
+      "page": "/api/openapi.json",
+      "regex": "^/api/openapi\\.json(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/openapi\\.json(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/genres",
+      "regex": "^/api/v1/anime/genres(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/anime/genres(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/home",
+      "regex": "^/api/v1/anime/home(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/anime/home(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/identify",
+      "regex": "^/api/v1/anime/identify(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/anime/identify(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/list",
+      "regex": "^/api/v1/anime/list(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/anime/list(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/mirror",
+      "regex": "^/api/v1/anime/mirror(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/anime/mirror(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/muse",
+      "regex": "^/api/v1/anime/muse(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/anime/muse(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/quotes",
+      "regex": "^/api/v1/anime/quotes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/anime/quotes(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/schedule",
+      "regex": "^/api/v1/anime/schedule(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/anime/schedule(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/schedule.ics",
+      "regex": "^/api/v1/anime/schedule\\.ics(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/anime/schedule\\.ics(?:/)?$"
+    },
+    {
+      "page": "/api/v1/anime/themes",
+      "regex": "^/api/v1/anime/themes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/anime/themes(?:/)?$"
+    },
+    {
+      "page": "/api/v1/comic/browse",
+      "regex": "^/api/v1/comic/browse(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/comic/browse(?:/)?$"
+    },
+    {
+      "page": "/api/v1/comic/genres",
+      "regex": "^/api/v1/comic/genres(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/comic/genres(?:/)?$"
+    },
+    {
+      "page": "/api/v1/comic/home",
+      "regex": "^/api/v1/comic/home(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/comic/home(?:/)?$"
+    },
+    {
+      "page": "/api/v1/comic/novels",
+      "regex": "^/api/v1/comic/novels(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/comic/novels(?:/)?$"
+    },
+    {
+      "page": "/api/v1/comic/shinigami",
+      "regex": "^/api/v1/comic/shinigami(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/comic/shinigami(?:/)?$"
+    },
+    {
+      "page": "/api/v1/movie/genres",
+      "regex": "^/api/v1/movie/genres(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/movie/genres(?:/)?$"
+    },
+    {
+      "page": "/api/v1/movie/home",
+      "regex": "^/api/v1/movie/home(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/movie/home(?:/)?$"
+    },
+    {
+      "page": "/api/v1/movie/list",
+      "regex": "^/api/v1/movie/list(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/movie/list(?:/)?$"
+    },
+    {
+      "page": "/api/v1/movie/search",
+      "regex": "^/api/v1/movie/search(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/movie/search(?:/)?$"
+    },
+    {
+      "page": "/api/v1/news",
+      "regex": "^/api/v1/news(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/news(?:/)?$"
+    },
+    {
+      "page": "/api/v1/radio/stations",
+      "regex": "^/api/v1/radio/stations(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/radio/stations(?:/)?$"
+    },
+    {
+      "page": "/api/v1/radio/tags",
+      "regex": "^/api/v1/radio/tags(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/radio/tags(?:/)?$"
+    },
+    {
+      "page": "/api/v1/search",
+      "regex": "^/api/v1/search(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/search(?:/)?$"
+    },
+    {
+      "page": "/api/v1/tv/categories",
+      "regex": "^/api/v1/tv/categories(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/tv/categories(?:/)?$"
+    },
+    {
+      "page": "/api/v1/tv/channels",
+      "regex": "^/api/v1/tv/channels(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/v1/tv/channels(?:/)?$"
+    },
+    {
+      "page": "/docs",
+      "regex": "^/docs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/docs(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}
