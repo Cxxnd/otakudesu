@@ -1,3 +1,0 @@
-{
-  "/api/v1/anime/detail/[slug]/episodes/route": "app/api/v1/anime/detail/[slug]/episodes/route.js"
-}
