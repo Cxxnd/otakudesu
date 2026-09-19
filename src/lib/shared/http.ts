@@ -59,8 +59,6 @@ async function request(
     },
     redirect: "follow",
     ...(method ? { method } : {}),
-    // Uint8Array is a valid fetch body at runtime; the DOM lib's BodyInit type
-    // just doesn't say so in this TS configuration.
     ...(body !== undefined ? { body: body as BodyInit } : {}),
   };
 
@@ -68,22 +66,36 @@ async function request(
     init.cache = "no-store";
   } else if (revalidate !== undefined || tags?.length) {
     init.next = {};
-    if (revalidate !== undefined) init.next.revalidate = revalidate;
-    if (tags?.length) init.next.tags = tags;
+
+    if (revalidate !== undefined) {
+      init.next.revalidate = revalidate;
+    }
+
+    if (tags?.length) {
+      init.next.tags = tags;
+    }
   }
 
   let lastError: unknown;
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     const timeoutSignal = AbortSignal.timeout(timeoutMs);
+
     const composed = signal
       ? AbortSignal.any([signal, timeoutSignal])
       : timeoutSignal;
 
     try {
-      const response = await fetch(url, { ...init, signal: composed });
+      const response = await fetch(url, {
+        ...init,
+        signal: composed,
+      });
 
-      // 5xx is worth another attempt; 4xx is not.
+      console.log(
+        `[UPSTREAM] ${url} → ${response.status} ${response.statusText} | attempt=${attempt + 1}`,
+      );
+
+      // Retry 5xx
       if (response.status >= 500 && attempt < retries) {
         lastError = UpstreamError.failed(url, response.status);
         continue;
@@ -95,13 +107,27 @@ async function request(
 
       return response;
     } catch (error) {
-      if (error instanceof UpstreamError) throw error;
+      if (error instanceof UpstreamError) {
+        throw error;
+      }
+
+      console.error(
+        `[UPSTREAM ERROR] ${url}`,
+        error instanceof Error ? `${error.name}: ${error.message}` : error,
+      );
+
       lastError = asUpstreamFailure(url, error);
-      if (attempt >= retries) break;
+
+      if (attempt >= retries) {
+        break;
+      }
     }
   }
 
-  if (lastError instanceof UpstreamError) throw lastError;
+  if (lastError instanceof UpstreamError) {
+    throw lastError;
+  }
+
   throw asUpstreamFailure(url, lastError);
 }
 
