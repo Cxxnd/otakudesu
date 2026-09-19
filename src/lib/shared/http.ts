@@ -132,15 +132,22 @@ async function request(
 }
 
 function asUpstreamFailure(url: string, error: unknown): UpstreamError {
-  if (error instanceof UpstreamError) return error;
-  // AbortSignal.timeout rejects with TimeoutError; some runtimes surface AbortError.
+  if (error instanceof UpstreamError) {
+    return error;
+  }
+
   if (
     error instanceof Error &&
     (error.name === "TimeoutError" || error.name === "AbortError")
   ) {
     return UpstreamError.timeout(url);
   }
-  return new UpstreamError(`Upstream request failed: ${url}`);
+
+  const message = error instanceof Error ? error.message : String(error);
+
+  console.error(`[UPSTREAM FAILURE] ${url}: ${message}`);
+
+  return new UpstreamError(`Upstream request failed: ${url} — ${message}`);
 }
 
 /** Fetch upstream HTML. */
