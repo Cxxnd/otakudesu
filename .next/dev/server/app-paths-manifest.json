@@ -1,0 +1,9 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/health/route": "app/api/health/route.js",
+  "/api/openapi.json/route": "app/api/openapi.json/route.js",
+  "/api/v1/anime/home/route": "app/api/v1/anime/home/route.js",
+  "/api/v1/anime/ongoing/[page]/route": "app/api/v1/anime/ongoing/[page]/route.js",
+  "/docs/route": "app/docs/route.js",
+  "/page": "app/page.js"
+}

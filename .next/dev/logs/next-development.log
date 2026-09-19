@@ -1,0 +1,10 @@
+{"timestamp":"00:00:05.521","source":"Server","level":"WARN","message":"⚠ Slow filesystem detected. The benchmark took 445ms. If /home/faza/VSCODE/otakudesu/.next/dev is a network drive, consider moving it to a local folder.\nSee more: https://nextjs.org/docs/app/guides/local-development"}
+{"timestamp":"00:00:13.195","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:30.952","source":"Server","level":"LOG","message":"○ Compiling / ..."}
+{"timestamp":"00:00:35.544","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:00:44.344","source":"Server","level":"LOG","message":"○ Compiling /docs ..."}
+{"timestamp":"00:00:50.796","source":"Server","level":"LOG","message":"○ Compiling /api/openapi.json ..."}
+{"timestamp":"00:02:06.890","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:02:19.595","source":"Server","level":"LOG","message":"○ Compiling /_not-found/page ..."}
+{"timestamp":"00:03:46.742","source":"Server","level":"LOG","message":"○ Compiling /api/v1/anime/home ..."}
+{"timestamp":"00:05:31.156","source":"Server","level":"LOG","message":"○ Compiling /api/health ..."}

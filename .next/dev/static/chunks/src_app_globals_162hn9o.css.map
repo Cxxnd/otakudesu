@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///home/faza/VSCODE/otakudesu/src/app/globals.css"],"sourcesContent":[":root {\n  --bg: #ffffff;\n  --fg: #101014;\n  --muted: #5c5c66;\n  --line: #d9d9e0;\n  --accent: #f97316;\n  --code-bg: #f4f4f6;\n}\n\n@media (prefers-color-scheme: dark) {\n  :root {\n    --bg: #0b0b0c;\n    --fg: #f2f2f4;\n    --muted: #9a9aa6;\n    --line: #26262c;\n    --accent: #f97316;\n    --code-bg: #151519;\n  }\n}\n\n* {\n  box-sizing: border-box;\n}\n\nhtml,\nbody {\n  margin: 0;\n  padding: 0;\n  background: var(--bg);\n  color: var(--fg);\n  font-family: ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif;\n  line-height: 1.6;\n  -webkit-font-smoothing: antialiased;\n}\n\na {\n  color: inherit;\n}\n\ncode,\npre {\n  font-family: ui-monospace, \"JetBrains Mono\", \"SFMono-Regular\", Menlo, monospace;\n  font-size: 0.85em;\n}\n"],"names":[],"mappings":"AAAA;;;;;;;;;AASA;EACE;;;;;;;;;;AAUF;;;;AAIA;;;;;;;;;;AAWA;;;;AAIA"}}]
+}
