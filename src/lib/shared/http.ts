@@ -1,9 +1,13 @@
 import { UpstreamError } from "@/lib/shared/errors";
 
-// Vercel Hobby mati di detik ke-10. Set 8s biar masih sempat lempar error rapi.
+/**
+ * Vercel Hobby mematikan function di detik ke-10.
+ * Set 8s supaya kita masih sempat melempar error yang rapi
+ * sebelum Vercel memotong paksa.
+ */
 const DEFAULT_TIMEOUT_MS = 8_000;
 
-// Delay antar retry (ms). Naik tiap percobaan biar tidak hammer upstream.
+/** Delay dasar antar retry (ms). Naik linear tiap percobaan. */
 const RETRY_BASE_DELAY_MS = 400;
 
 const userAgents = [
@@ -22,8 +26,11 @@ function sleep(ms: number) {
 }
 
 /**
- * Header browser asli. Cloudflare & WAF lain sering cek header ini,
- * bukan cuma User-Agent. Tanpa ini, request dianggap bot.
+ * Header yang menyerupai browser Chrome asli.
+ *
+ * Cloudflare dan WAF lain tidak hanya memeriksa User-Agent, tetapi juga
+ * header `Sec-Ch-Ua-*`, `Sec-Fetch-*`, dan `Accept-Encoding`. Tanpa ini,
+ * request dari IP data center seperti Vercel hampir pasti dianggap bot.
  */
 function buildBrowserHeaders(
     extra: Record<string, string> = {},
@@ -50,16 +57,27 @@ function buildBrowserHeaders(
 }
 
 export type FetchOptions = {
+    /** Seconds to keep the response in the Next.js Data Cache. `0` disables caching. */
     revalidate?: number;
+    /** Cache tags for on-demand invalidation. */
     tags?: string[];
     headers?: Record<string, string>;
     timeoutMs?: number;
+    /** Retries on 5xx / 429 / network failure. Defaults to 2 (3 attempts total). */
     retries?: number;
     signal?: AbortSignal;
+    /** Defaults to GET. A body only makes sense with POST/PUT. */
     method?: "GET" | "POST" | "PUT";
     body?: BodyInit | Uint8Array;
 };
 
+/**
+ * Single I/O boundary untuk seluruh API.
+ *
+ * Memakai `fetch` bawaan (bukan axios) supaya Next.js Data Cache dan
+ * `revalidate` tetap berlaku — itulah yang membuat respons upstream
+ * bisa di-cache sama sekali.
+ */
 async function request(
     url: string,
     options: FetchOptions = {},
@@ -69,7 +87,7 @@ async function request(
         tags,
         headers = {},
         timeoutMs = DEFAULT_TIMEOUT_MS,
-        retries = 2, // total 3 percobaan
+        retries = 2,
         signal,
         method,
         body,
@@ -88,8 +106,14 @@ async function request(
         init.cache = "no-store";
     } else if (revalidate !== undefined || tags?.length) {
         init.next = {};
-        if (revalidate !== undefined) init.next.revalidate = revalidate;
-        if (tags?.length) init.next.tags = tags;
+
+        if (revalidate !== undefined) {
+            init.next.revalidate = revalidate;
+        }
+
+        if (tags?.length) {
+            init.next.tags = tags;
+        }
     }
 
     let lastError: unknown;
@@ -110,7 +134,7 @@ async function request(
                 `[UPSTREAM] ${url} → ${response.status} ${response.statusText} | attempt=${attempt + 1}`,
             );
 
-            // 5xx / 429 → retry dengan delay
+            // 5xx dan 429 layak dicoba ulang.
             if (
                 (response.status >= 500 || response.status === 429) &&
                 attempt < retries
@@ -121,11 +145,13 @@ async function request(
             }
 
             if (!response.ok) {
-                // Log body preview untuk tahu apakah Cloudflare / block.
+                // Log detail supaya kita tahu ini Cloudflare, WAF, atau
+                // sekadar 404 biasa.
                 const preview = await response
                     .clone()
                     .text()
                     .catch(() => "");
+
                 console.error(
                     `[UPSTREAM BLOCKED] ${url} → ${response.status} ${response.statusText}`,
                 );
@@ -134,12 +160,15 @@ async function request(
                     JSON.stringify(Object.fromEntries(response.headers)),
                 );
                 console.error(`[UPSTREAM BLOCKED BODY]`, preview.slice(0, 400));
+
                 throw UpstreamError.failed(url, response.status);
             }
 
             return response;
         } catch (error) {
-            if (error instanceof UpstreamError) throw error;
+            if (error instanceof UpstreamError) {
+                throw error;
+            }
 
             console.error(
                 `[UPSTREAM ERROR] ${url}`,
@@ -150,17 +179,25 @@ async function request(
 
             lastError = asUpstreamFailure(url, error);
 
-            if (attempt >= retries) break;
+            if (attempt >= retries) {
+                break;
+            }
+
             await sleep(RETRY_BASE_DELAY_MS * (attempt + 1));
         }
     }
 
-    if (lastError instanceof UpstreamError) throw lastError;
+    if (lastError instanceof UpstreamError) {
+        throw lastError;
+    }
+
     throw asUpstreamFailure(url, lastError);
 }
 
 function asUpstreamFailure(url: string, error: unknown): UpstreamError {
-    if (error instanceof UpstreamError) return error;
+    if (error instanceof UpstreamError) {
+        return error;
+    }
 
     if (
         error instanceof Error &&
@@ -170,7 +207,9 @@ function asUpstreamFailure(url: string, error: unknown): UpstreamError {
     }
 
     const message = error instanceof Error ? error.message : String(error);
+
     console.error(`[UPSTREAM FAILURE] ${url}: ${message}`);
+
     return new UpstreamError(`Upstream request failed: ${url} — ${message}`);
 }
 
@@ -209,8 +248,10 @@ export async function fetchJson<T>(
     }
 }
 
+/** Escape hatch for callers that need the raw `Response` (e.g. the HLS proxy). */
 export { request as fetchRaw };
 
+/** Join a base URL with a path, tolerating slashes on either side. */
 export function joinUrl(base: string, path: string): string {
     if (!path) return base;
     return `${base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
