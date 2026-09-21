@@ -2,8 +2,8 @@ import { load } from "cheerio";
 import type { ScheduleByDay } from "@/types/anime";
 
 const extractSlugFromUrl = (url: string): string => {
-  const parts = url.split("/").filter(Boolean);
-  return parts[parts.length - 1] ?? "";
+    const parts = url.split("/").filter(Boolean);
+    return parts[parts.length - 1] ?? "";
 };
 
 /**
@@ -12,29 +12,29 @@ const extractSlugFromUrl = (url: string): string => {
  * domain into the API response, which broke every other consumer.
  */
 const scrapeSchedule = (html: string): ScheduleByDay[] => {
-  const $ = load(html);
-  const scheduleByDay: ScheduleByDay[] = [];
+    const $ = load(html);
+    const scheduleByDay: ScheduleByDay[] = [];
 
-  $(".kglist321").each((_, element) => {
-    const day = $(element).find("h2").text().trim();
-    const anime_list: ScheduleByDay["anime_list"] = [];
+    $(".kglist321").each((_, element) => {
+        const day = $(element).find("h2").text().trim();
+        const anime_list: ScheduleByDay["anime_list"] = [];
 
-    $(element)
-      .find("ul > li")
-      .each((_, liElement) => {
-        const anime_name = $(liElement).find("a").text().trim();
-        const url = $(liElement).find("a").attr("href") ?? "";
-        const slug = extractSlugFromUrl(url);
+        $(element)
+            .find("ul > li")
+            .each((_, liElement) => {
+                const anime_name = $(liElement).find("a").text().trim();
+                const url = $(liElement).find("a").attr("href") ?? "";
+                const slug = extractSlugFromUrl(url);
 
-        if (!anime_name && !slug) return;
+                if (!anime_name && !slug) return;
 
-        anime_list.push({ anime_name, url, slug });
-      });
+                anime_list.push({ anime_name, url, slug });
+            });
 
-    scheduleByDay.push({ day, anime_list });
-  });
+        scheduleByDay.push({ day, anime_list });
+    });
 
-  return scheduleByDay;
+    return scheduleByDay;
 };
 
 export default scrapeSchedule;
